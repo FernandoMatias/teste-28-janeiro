@@ -157,7 +157,74 @@ Ext.define('Touch2Demo.controller.Main', {
 	}
     },
     showConfiguracoes: function () {
-	Ext.Viewport.setActiveItem(this.getConfiguracoes());
+    	
+//document.addEventListener("deviceready", onDeviceReady, false);
+
+onDeviceReady();
+
+    // Populate the database
+    //
+    function populateDB(tx) {
+        tx.executeSql('DROP TABLE IF EXISTS DEMO');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
+        tx.executeSql('INSERT INTO DEMO (id, data) VALUES (1, "First row")');
+        tx.executeSql('INSERT INTO DEMO (id, data) VALUES (2, "Second row")');
+    }
+
+    // Query the database
+    //
+    function queryDB(tx) {
+        tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorCB);
+    }
+
+    // Query the success callback
+    //
+    function querySuccess(tx, results) {
+        /*console.log("Returned rows = " + results.rows.length);
+        // this will be true since it was a select statement and so rowsAffected was 0
+        if (!results.rowsAffected) {
+            console.log('No rows affected!');
+            return false;
+        }
+        // for an insert statement, this property will return the ID of the last inserted row
+        console.log("Last inserted row ID = " + results.insertId);
+
+        Ext.Msg.alert('inserted', results.insertId, Ext.emptyFn);*/
+
+        var len = results.rows.length;
+        var _msg = "";
+        console.log("DEMO table: " + len + " rows found.");
+        for (var i=0; i<len; i++){
+            //console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).data);
+            _msg += "Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).data + "\n";
+        }
+
+        Ext.Msg.alert('inserted', _msg, Ext.emptyFn);
+    }
+
+    // Transaction error callback
+    //
+    function errorCB(err) {
+        console.log("Error processing SQL: "+err.code);
+        Ext.Msg.alert('error', err.code, Ext.emptyFn);
+    }
+
+    // Transaction success callback
+    //
+    function successCB() {
+        var db = window.openDatabase("Database", "1.0", "Cordova Demo", 200000);
+        db.transaction(queryDB, errorCB);
+    }
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        var db = window.openDatabase("Database", "1.0", "Cordova Demo", 200000);
+        db.transaction(populateDB, errorCB, successCB);
+    }
+
+
+	//Ext.Viewport.setActiveItem(this.getConfiguracoes());
     },
     teste: function () {
 	Ext.Viewport.setActiveItem(this.getTeste());
@@ -285,7 +352,7 @@ Ext.define('Touch2Demo.controller.Main', {
 	    });
 	});
 	Ext.Msg.confirm(
-		'Sincronização',
+		'SincronizaÃ§Ã£o',
 		'Deseja sincronizar os contatos?',
 		function (btn) {
 		    if (btn == 'yes') {
@@ -593,8 +660,8 @@ Ext.define('Touch2Demo.controller.Main', {
 	    k++;
 	});
 	if (k <= 0) {
-	    Ext.Msg.alert('Sincronização', 'Não usuarios no banco', Ext.emptyFn);
-	    //    this.tela de sincronização
+	    Ext.Msg.alert('SincronizaÃ§Ã£o', 'NÃ£o usuarios no banco', Ext.emptyFn);
+	    //    this.tela de sincronizaÃ§Ã£o
 	} else {
 
 	}
@@ -607,7 +674,7 @@ Ext.define('Touch2Demo.controller.Main', {
 	    n++;
 	});
 	if (n <= 0) {
-	    Ext.Msg.alert('Sair', 'não a usuario logado');
+	    Ext.Msg.alert('Sair', 'nÃ£o a usuario logado');
 	} else {
 	    Ext.Msg.confirm(
 		    'Sair',
